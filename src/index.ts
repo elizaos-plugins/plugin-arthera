@@ -1,12 +1,9 @@
-export * from "./actions/transfer";
-export * from "./providers/wallet";
 export * from "./types";
 
-import type { Plugin } from "@elizaos/core";
 import { transferAction } from "./actions/transfer";
 import { artheraWalletProvider } from "./providers/wallet";
 
-export const artheraPlugin: Plugin = {
+export const artheraPlugin = {
     name: "arthera",
     description: "Arthera blockchain integration plugin",
     providers: [artheraWalletProvider],

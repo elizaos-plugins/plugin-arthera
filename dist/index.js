@@ -1,3 +1,7 @@
+// src/types/index.ts
+import * as viemChains from "viem/chains";
+var _SupportedChainList = Object.keys(viemChains);
+
 // src/actions/transfer.ts
 import { formatEther, parseEther } from "viem";
 import {
@@ -14,12 +18,32 @@ import {
   http
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import * as viemChains from "viem/chains";
+import * as viemChains2 from "viem/chains";
 var WalletProvider = class {
-  currentChain = "arthera";
-  chains = { arthera: viemChains.arthera };
-  account;
   constructor(privateKey, chains) {
+    this.currentChain = "arthera";
+    this.chains = { arthera: viemChains2.arthera };
+    this.setAccount = (pk) => {
+      this.account = privateKeyToAccount(pk);
+    };
+    this.setChains = (chains) => {
+      if (!chains) {
+        return;
+      }
+      for (const chain of Object.keys(chains)) {
+        this.chains[chain] = chains[chain];
+      }
+    };
+    this.setCurrentChain = (chain) => {
+      this.currentChain = chain;
+    };
+    this.createHttpTransport = (chainName) => {
+      const chain = this.chains[chainName];
+      if (chain.rpcUrls.custom) {
+        return http(chain.rpcUrls.custom.http[0]);
+      }
+      return http(chain.rpcUrls.default.http[0]);
+    };
     this.setAccount(privateKey);
     this.setChains(chains);
     if (chains && Object.keys(chains).length > 0) {
@@ -50,7 +74,7 @@ var WalletProvider = class {
     return walletClient;
   }
   getChainConfigs(chainName) {
-    const chain = viemChains[chainName];
+    const chain = viemChains2[chainName];
     if (!chain?.id) {
       throw new Error("Invalid chain name");
     }
@@ -80,29 +104,8 @@ var WalletProvider = class {
       return null;
     }
   }
-  setAccount = (pk) => {
-    this.account = privateKeyToAccount(pk);
-  };
-  setChains = (chains) => {
-    if (!chains) {
-      return;
-    }
-    for (const chain of Object.keys(chains)) {
-      this.chains[chain] = chains[chain];
-    }
-  };
-  setCurrentChain = (chain) => {
-    this.currentChain = chain;
-  };
-  createHttpTransport = (chainName) => {
-    const chain = this.chains[chainName];
-    if (chain.rpcUrls.custom) {
-      return http(chain.rpcUrls.custom.http[0]);
-    }
-    return http(chain.rpcUrls.default.http[0]);
-  };
   static genChainFromName(chainName, customRpcUrl) {
-    const baseChain = viemChains[chainName];
+    const baseChain = viemChains2[chainName];
     if (!baseChain?.id) {
       throw new Error("Invalid chain name");
     }
@@ -311,10 +314,6 @@ Transaction Hash: ${transferResp.hash}`,
   similes: ["SEND_TOKENS", "TOKEN_TRANSFER", "MOVE_TOKENS"]
 };
 
-// src/types/index.ts
-import * as viemChains2 from "viem/chains";
-var _SupportedChainList = Object.keys(viemChains2);
-
 // src/index.ts
 var artheraPlugin = {
   name: "arthera",
@@ -326,13 +325,7 @@ var artheraPlugin = {
 };
 var index_default = artheraPlugin;
 export {
-  TransferAction,
-  WalletProvider,
   artheraPlugin,
-  artheraWalletProvider,
-  index_default as default,
-  initWalletProvider,
-  transferAction,
-  transferTemplate
+  index_default as default
 };
 //# sourceMappingURL=index.js.map
