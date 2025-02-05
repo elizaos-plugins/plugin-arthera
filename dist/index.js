@@ -87,9 +87,9 @@ var WalletProvider = class {
     if (!chains) {
       return;
     }
-    Object.keys(chains).forEach((chain) => {
+    for (const chain of Object.keys(chains)) {
       this.chains[chain] = chains[chain];
-    });
+    }
   };
   setCurrentChain = (chain) => {
     this.currentChain = chain;
@@ -121,13 +121,13 @@ var WalletProvider = class {
 var genChainsFromRuntime = (runtime) => {
   const chainNames = ["arthera"];
   const chains = {};
-  chainNames.forEach((chainName) => {
+  for (const chainName of chainNames) {
     const rpcUrl = runtime.getSetting(
-      "ETHEREUM_PROVIDER_" + chainName.toUpperCase()
+      `ETHEREUM_PROVIDER_${chainName.toUpperCase()}`
     );
     const chain = WalletProvider.genChainFromName(chainName, rpcUrl);
     chains[chainName] = chain;
-  });
+  }
   return chains;
 };
 var initWalletProvider = (runtime) => {
@@ -202,10 +202,10 @@ var TransferAction = class {
         value: parseEther(params.amount),
         data: params.data,
         kzg: {
-          blobToKzgCommitment: function(_) {
+          blobToKzgCommitment: (_) => {
             throw new Error("Function not implemented.");
           },
-          computeBlobKzgProof: function(_blob, _commitment) {
+          computeBlobKzgProof: (_blob, _commitment) => {
             throw new Error("Function not implemented.");
           }
         },
@@ -241,7 +241,7 @@ var buildTransferDetails = async (state, runtime, wp) => {
   const existingChain = wp.chains[transferDetails.fromChain];
   if (!existingChain) {
     throw new Error(
-      "The chain " + transferDetails.fromChain + " not configured yet. Add the chain or choose one from configured: " + chains.toString()
+      `The chain ${transferDetails.fromChain} not configured yet. Add the chain or choose one from configured: ${chains.toString()}`
     );
   }
   return transferDetails;
