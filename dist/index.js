@@ -20,30 +20,10 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import * as viemChains2 from "viem/chains";
 var WalletProvider = class {
+  currentChain = "arthera";
+  chains = { arthera: viemChains2.arthera };
+  account;
   constructor(privateKey, chains) {
-    this.currentChain = "arthera";
-    this.chains = { arthera: viemChains2.arthera };
-    this.setAccount = (pk) => {
-      this.account = privateKeyToAccount(pk);
-    };
-    this.setChains = (chains) => {
-      if (!chains) {
-        return;
-      }
-      for (const chain of Object.keys(chains)) {
-        this.chains[chain] = chains[chain];
-      }
-    };
-    this.setCurrentChain = (chain) => {
-      this.currentChain = chain;
-    };
-    this.createHttpTransport = (chainName) => {
-      const chain = this.chains[chainName];
-      if (chain.rpcUrls.custom) {
-        return http(chain.rpcUrls.custom.http[0]);
-      }
-      return http(chain.rpcUrls.default.http[0]);
-    };
     this.setAccount(privateKey);
     this.setChains(chains);
     if (chains && Object.keys(chains).length > 0) {
@@ -75,7 +55,7 @@ var WalletProvider = class {
   }
   getChainConfigs(chainName) {
     const chain = viemChains2[chainName];
-    if (!chain?.id) {
+    if (!(chain == null ? void 0 : chain.id)) {
       throw new Error("Invalid chain name");
     }
     return chain;
@@ -104,9 +84,30 @@ var WalletProvider = class {
       return null;
     }
   }
+  setAccount = (pk) => {
+    this.account = privateKeyToAccount(pk);
+  };
+  setChains = (chains) => {
+    if (!chains) {
+      return;
+    }
+    for (const chain of Object.keys(chains)) {
+      this.chains[chain] = chains[chain];
+    }
+  };
+  setCurrentChain = (chain) => {
+    this.currentChain = chain;
+  };
+  createHttpTransport = (chainName) => {
+    const chain = this.chains[chainName];
+    if (chain.rpcUrls.custom) {
+      return http(chain.rpcUrls.custom.http[0]);
+    }
+    return http(chain.rpcUrls.default.http[0]);
+  };
   static genChainFromName(chainName, customRpcUrl) {
     const baseChain = viemChains2[chainName];
-    if (!baseChain?.id) {
+    if (!(baseChain == null ? void 0 : baseChain.id)) {
       throw new Error("Invalid chain name");
     }
     const viemChain = customRpcUrl ? {

@@ -1,3 +1,4 @@
+import * as _elizaos_core from '@elizaos/core';
 import { Hash, Address, Chain, PublicClient, HttpTransport, Account, WalletClient } from 'viem';
 import * as viemChains from 'viem/chains';
 
@@ -55,15 +56,15 @@ interface ProviderError extends Error {
 declare const artheraPlugin: {
     name: string;
     description: string;
-    providers: Provider[];
+    providers: _elizaos_core.Provider[];
     evaluators: any[];
     services: any[];
     actions: {
         name: string;
         description: string;
-        handler: (runtime: IAgentRuntime, _message: Memory, state: State, _options: Record<string, unknown>, callback?: HandlerCallback) => Promise<boolean>;
+        handler: (runtime: _elizaos_core.IAgentRuntime, _message: _elizaos_core.Memory, state: _elizaos_core.State, _options: Record<string, unknown>, callback?: _elizaos_core.HandlerCallback) => Promise<boolean>;
         template: string;
-        validate: (runtime: IAgentRuntime) => Promise<boolean>;
+        validate: (runtime: _elizaos_core.IAgentRuntime) => Promise<boolean>;
         examples: {
             user: string;
             content: {
